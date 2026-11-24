@@ -1,5 +1,5 @@
 --[[
-    DELTA ADMIN — Compact Portable (220x300) Single-File Roblox Admin System
+    ADMIN COMMAND — Compact Portable (220x300) Single-File Roblox Admin System
     Features:
       - Draggable 6-Petal Geometric Toggle Orb (Native Vector UI, Open/Close Menu)
       - Compact 220x300 Mobile-Friendly Frame
@@ -22,7 +22,7 @@ local WHITELIST_ENABLED = false
 local ADMIN_WHITELIST = {}
 
 if WHITELIST_ENABLED and not ADMIN_WHITELIST[LocalPlayer.UserId] then
-    warn("[DELTA ADMIN] UserId " .. tostring(LocalPlayer.UserId) .. " is not in ADMIN_WHITELIST.")
+    warn("[ADMIN COMMAND] UserId " .. tostring(LocalPlayer.UserId) .. " is not in ADMIN_WHITELIST.")
     return
 end
 
@@ -37,7 +37,7 @@ end
 local currentLang = "th"
 local Strings = {
     th = {
-        subtitle = "โหมดมุมมองเรา (Client)",
+        subtitle = "ระบบแอดมิน (Admin Authority)",
         tab_spectate = "ส่อง",
         tab_admin = "แอดมิน",
         tab_players = "ผู้เล่น",
@@ -58,7 +58,8 @@ local Strings = {
         esp_on = "เปิดสแกน ESP แล้ว",
         esp_off = "ปิดสแกน ESP แล้ว",
         -- Admin tab
-        fly = "บิน (Fly)",
+        fly = "บิน (ไม่ทะลุ)",
+        anti_fling = "กันคนดีด (Anti-Fling)",
         noclip = "ทะลุกำแพง",
         inf_jump = "โดดไม่จำกัด",
         godmode = "อมตะ (God)",
@@ -92,7 +93,7 @@ local Strings = {
         announce_title = "ประกาศจากแอดมิน",
     },
     en = {
-        subtitle = "Client View Mode",
+        subtitle = "Admin Authority",
         tab_spectate = "Spec",
         tab_admin = "Admin",
         tab_players = "Ply",
@@ -113,7 +114,8 @@ local Strings = {
         esp_on = "ESP Scanner ON",
         esp_off = "ESP Scanner OFF",
         -- Admin tab
-        fly = "Fly Mode",
+        fly = "Fly (Solid)",
+        anti_fling = "Anti-Fling Shield",
         noclip = "Noclip",
         inf_jump = "Infinite Jump",
         godmode = "Godmode",
@@ -153,11 +155,12 @@ local function T(key)
     return dict[key] or key
 end
 
-local ACCENT = Color3.fromRGB(0, 150, 255)
-local ACCENT_LIGHT = Color3.fromRGB(165, 225, 255)
-local BG_DARK = Color3.fromRGB(20, 20, 25)
-local BG_SURFACE = Color3.fromRGB(30, 30, 38)
-local BG_ELEVATED = Color3.fromRGB(40, 40, 50)
+local ACCENT = Color3.fromRGB(225, 29, 72)
+local ACCENT_GOLD = Color3.fromRGB(251, 191, 36)
+local BG_DARK = Color3.fromRGB(12, 13, 18)
+local BG_SURFACE = Color3.fromRGB(21, 23, 34)
+local BG_ELEVATED = Color3.fromRGB(34, 37, 52)
+local BORDER_SUBTLE = Color3.fromRGB(40, 44, 62)
 local TEXT_MAIN = Color3.fromRGB(240, 244, 248)
 local TEXT_MUTED = Color3.fromRGB(165, 175, 190)
 
@@ -252,7 +255,7 @@ OrbInnerRing.ZIndex = 31
 OrbInnerRing.Parent = ToggleOrb
 Instance.new("UICorner", OrbInnerRing).CornerRadius = UDim.new(1, 0)
 local InnerRingStroke = Instance.new("UIStroke")
-InnerRingStroke.Color = ACCENT_LIGHT
+InnerRingStroke.Color = ACCENT_GOLD
 InnerRingStroke.Transparency = 0.45
 InnerRingStroke.Thickness = 1
 InnerRingStroke.Parent = OrbInnerRing
@@ -264,7 +267,7 @@ OrbRotor.BackgroundTransparency = 1
 OrbRotor.ZIndex = 32
 OrbRotor.Parent = ToggleOrb
 
--- 6 Redesigned Interlocking Geometric Petals (60 deg radial symmetry)
+-- 6 Redesigned Interlocking Geometric Petals (Gold-to-Accent Admin Gradient)
 for i = 0, 5 do
     local angleDeg = i * 60
     local rad = math.rad(angleDeg)
@@ -283,20 +286,20 @@ for i = 0, 5 do
 
     local grad = Instance.new("UIGradient")
     grad.Color = ColorSequence.new({
-        ColorSequenceKeypoint.new(0, ACCENT_LIGHT),
+        ColorSequenceKeypoint.new(0, ACCENT_GOLD),
         ColorSequenceKeypoint.new(1, ACCENT),
     })
     grad.Rotation = 90
     grad.Parent = petal
 end
 
--- Luminous Diamond Core
+-- Luminous Gold Diamond Core
 local OrbCore = Instance.new("Frame")
 OrbCore.Size = UDim2.new(0, 10, 0, 10)
 OrbCore.AnchorPoint = Vector2.new(0.5, 0.5)
 OrbCore.Position = UDim2.new(0.5, 0, 0.5, 0)
 OrbCore.Rotation = 45
-OrbCore.BackgroundColor3 = ACCENT_LIGHT
+OrbCore.BackgroundColor3 = ACCENT_GOLD
 OrbCore.BorderSizePixel = 0
 OrbCore.ZIndex = 34
 OrbCore.Parent = ToggleOrb
@@ -371,13 +374,29 @@ do
     end)
 end
 
--- Compact Top Bar (32px height)
+-- Compact Metallic Admin Command Top Bar (32px height)
 local TopBar = Instance.new("Frame")
 TopBar.Name = "TopBar"
 TopBar.Size = UDim2.new(1, 0, 0, 32)
-TopBar.BackgroundColor3 = Color3.fromRGB(16, 16, 22)
+TopBar.BackgroundColor3 = Color3.new(1, 1, 1)
 TopBar.BorderSizePixel = 0
 TopBar.Parent = MainFrame
+
+local TopBarGrad = Instance.new("UIGradient")
+TopBarGrad.Color = ColorSequence.new({
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(27, 29, 41)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(16, 17, 24)),
+})
+TopBarGrad.Rotation = 90
+TopBarGrad.Parent = TopBar
+
+local TopDivider = Instance.new("Frame")
+TopDivider.Size = UDim2.new(1, 0, 0, 1)
+TopDivider.Position = UDim2.new(0, 0, 1, -1)
+TopDivider.BackgroundColor3 = ACCENT
+TopDivider.BackgroundTransparency = 0.55
+TopDivider.BorderSizePixel = 0
+TopDivider.Parent = TopBar
 
 do
     local dragging, dragInput, dragStart, startPos
@@ -416,9 +435,9 @@ TitleLabel.Name = "TitleLabel"
 TitleLabel.Size = UDim2.new(1, -120, 1, 0)
 TitleLabel.Position = UDim2.new(0, 6, 0, 0)
 TitleLabel.BackgroundTransparency = 1
-TitleLabel.Text = "DELTA ADMIN"
-TitleLabel.TextColor3 = ACCENT
-TitleLabel.TextSize = 11
+TitleLabel.Text = "🛡️ ADMIN COMMAND"
+TitleLabel.TextColor3 = ACCENT_GOLD
+TitleLabel.TextSize = 10
 TitleLabel.Font = Enum.Font.GothamBold
 TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
 TitleLabel.TextTruncate = Enum.TextTruncate.AtEnd
@@ -436,6 +455,9 @@ local function makeHeaderBtn(name, text, offsetFromRight, width)
     btn.Font = Enum.Font.GothamBold
     btn.Parent = TopBar
     Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 4)
+    local st = Instance.new("UIStroke", btn)
+    st.Color = BORDER_SUBTLE
+    st.Thickness = 1
     return btn
 end
 
@@ -444,26 +466,31 @@ ToggleButton.TextColor3 = ACCENT
 ToggleButton.TextSize = 14
 
 local LangButton = makeHeaderBtn("LangButton", string.upper(currentLang), -49, 23)
-LangButton.TextColor3 = ACCENT
+LangButton.TextColor3 = ACCENT_GOLD
 LangButton.TextSize = 9
 
 local SaveButton = makeHeaderBtn("SaveButton", "💻", -71, 20)
 local TeleportButton = makeHeaderBtn("TeleportButton", "🤖", -93, 20)
 local ScanButton = makeHeaderBtn("ScanButton", "👁️", -115, 20)
 
--- Compact Status Line
+-- Compact Status Strip
 local StatusBar = Instance.new("TextLabel")
 StatusBar.Name = "StatusBar"
-StatusBar.Size = UDim2.new(1, -12, 0, 14)
-StatusBar.Position = UDim2.new(0, 6, 0, 33)
-StatusBar.BackgroundTransparency = 1
-StatusBar.Text = "DELTA ADMIN · " .. T("subtitle")
-StatusBar.TextColor3 = TEXT_MUTED
-StatusBar.TextSize = 10
-StatusBar.Font = Enum.Font.Gotham
+StatusBar.Size = UDim2.new(1, -12, 0, 15)
+StatusBar.Position = UDim2.new(0, 6, 0, 34)
+StatusBar.BackgroundColor3 = BG_SURFACE
+StatusBar.BorderSizePixel = 0
+StatusBar.Text = " " .. "ADMIN COMMAND · " .. T("subtitle")
+StatusBar.TextColor3 = ACCENT_GOLD
+StatusBar.TextSize = 9
+StatusBar.Font = Enum.Font.GothamSemibold
 StatusBar.TextXAlignment = Enum.TextXAlignment.Left
 StatusBar.TextTruncate = Enum.TextTruncate.AtEnd
 StatusBar.Parent = MainFrame
+Instance.new("UICorner", StatusBar).CornerRadius = UDim.new(0, 4)
+local StatusStroke = Instance.new("UIStroke", StatusBar)
+StatusStroke.Color = BORDER_SUBTLE
+StatusStroke.Thickness = 1
 
 local function setStatus(msg)
     StatusBar.Text = msg
@@ -476,11 +503,14 @@ local activeTab = enabledTabs[1]
 local TabBar = Instance.new("Frame")
 TabBar.Name = "TabBar"
 TabBar.Size = UDim2.new(1, -12, 0, 24)
-TabBar.Position = UDim2.new(0, 6, 0, 49)
+TabBar.Position = UDim2.new(0, 6, 0, 51)
 TabBar.BackgroundColor3 = BG_SURFACE
 TabBar.BorderSizePixel = 0
 TabBar.Parent = MainFrame
 Instance.new("UICorner", TabBar).CornerRadius = UDim.new(0, 5)
+local TabBarStroke = Instance.new("UIStroke", TabBar)
+TabBarStroke.Color = BORDER_SUBTLE
+TabBarStroke.Thickness = 1
 
 local TabLayout = Instance.new("UIListLayout")
 TabLayout.FillDirection = Enum.FillDirection.Horizontal
@@ -491,8 +521,8 @@ TabLayout.Parent = TabBar
 
 local TabPages = Instance.new("Frame")
 TabPages.Name = "TabPages"
-TabPages.Size = UDim2.new(1, -12, 1, -110)
-TabPages.Position = UDim2.new(0, 6, 0, 77)
+TabPages.Size = UDim2.new(1, -12, 1, -112)
+TabPages.Position = UDim2.new(0, 6, 0, 78)
 TabPages.BackgroundTransparency = 1
 TabPages.Parent = MainFrame
 
@@ -508,6 +538,9 @@ ResetButton.TextSize = 11
 ResetButton.Font = Enum.Font.GothamBold
 ResetButton.Parent = MainFrame
 Instance.new("UICorner", ResetButton).CornerRadius = UDim.new(0, 5)
+local ResetStroke = Instance.new("UIStroke", ResetButton)
+ResetStroke.Color = BORDER_SUBTLE
+ResetStroke.Thickness = 1
 
 -- Confirm Overwrite Modal (from original script)
 local ConfirmFrame = Instance.new("Frame")
@@ -643,6 +676,7 @@ local clientHiddenUsers = {} -- Client-view Kick/Ban list
 -- Admin State
 local flyEnabled = false
 local flySpeed = 60
+local antiFlingEnabled = true -- Protected against player flings by default
 local noclipEnabled = false
 local infJumpEnabled = false
 local godmodeEnabled = false
@@ -829,7 +863,7 @@ local function teleportToCFrameFront(targetHRP)
     end
 end
 
--- Compact Row Builders
+-- Compact Bordered Command Row Builders
 local function createToggleRow(parent, labelKey, initialState, onToggle)
     local row = Instance.new("Frame")
     row.Size = UDim2.new(1, -4, 0, 28)
@@ -837,6 +871,9 @@ local function createToggleRow(parent, labelKey, initialState, onToggle)
     row.BorderSizePixel = 0
     row.Parent = parent
     Instance.new("UICorner", row).CornerRadius = UDim.new(0, 5)
+    local stroke = Instance.new("UIStroke", row)
+    stroke.Color = BORDER_SUBTLE
+    stroke.Thickness = 1
 
     local lbl = Instance.new("TextLabel")
     lbl.Size = UDim2.new(1, -54, 1, 0)
@@ -886,6 +923,9 @@ local function createStepperRow(parent, labelKey, initialVal, step, minVal, maxV
     row.BorderSizePixel = 0
     row.Parent = parent
     Instance.new("UICorner", row).CornerRadius = UDim.new(0, 5)
+    local stroke = Instance.new("UIStroke", row)
+    stroke.Color = BORDER_SUBTLE
+    stroke.Thickness = 1
 
     local lbl = Instance.new("TextLabel")
     lbl.Size = UDim2.new(1, -82, 1, 0)
@@ -963,6 +1003,9 @@ if tabScrollFrames["spectate"] then
     ModeSwitch.BorderSizePixel = 0
     ModeSwitch.Parent = page
     Instance.new("UICorner", ModeSwitch).CornerRadius = UDim.new(0, 5)
+    local msStroke = Instance.new("UIStroke", ModeSwitch)
+    msStroke.Color = BORDER_SUBTLE
+    msStroke.Thickness = 1
 
     local PlayersModeBtn = Instance.new("TextButton")
     PlayersModeBtn.Size = UDim2.new(0.5, -3, 1, -4)
@@ -998,6 +1041,9 @@ if tabScrollFrames["spectate"] then
     SearchBox.ClearTextOnFocus = false
     SearchBox.Parent = page
     Instance.new("UICorner", SearchBox).CornerRadius = UDim.new(0, 5)
+    local sbStroke = Instance.new("UIStroke", SearchBox)
+    sbStroke.Color = BORDER_SUBTLE
+    sbStroke.Thickness = 1
 
     local ListContainer = Instance.new("Frame")
     ListContainer.Size = UDim2.new(1, -4, 0, 0)
@@ -1130,7 +1176,7 @@ if tabScrollFrames["spectate"] then
                             selectedTargetPlayer = player
                             if activeSpectatingPlayer == player then
                                 activeSpectatingPlayer = nil
-                                setStatus("DELTA ADMIN · " .. T("subtitle"))
+                                setStatus("ADMIN COMMAND · " .. T("subtitle"))
                             else
                                 activeSpectatingPlayer = player
                                 activeSpectatingModel = nil
@@ -1197,7 +1243,7 @@ if tabScrollFrames["spectate"] then
                             selectBtn.MouseButton1Click:Connect(function()
                                 if activeSpectatingModel == obj then
                                     activeSpectatingModel = nil
-                                    setStatus("DELTA ADMIN · " .. T("subtitle"))
+                                    setStatus("ADMIN COMMAND · " .. T("subtitle"))
                                 else
                                     activeSpectatingModel = obj
                                     activeSpectatingPlayer = nil
@@ -1222,16 +1268,12 @@ if tabScrollFrames["spectate"] then
 end
 
 -- =========================================================
--- TAB 2: ADMIN ABILITIES (100% Client-View Native)
+-- TAB 2: ADMIN ABILITIES (Solid-Collision Fly + Anti-Fling)
 -- =========================================================
 local flyBV, flyBG
 local function stopFly()
     if flyBV then flyBV:Destroy() flyBV = nil end
     if flyBG then flyBG:Destroy() flyBG = nil end
-    local char = LocalPlayer.Character
-    if char and char:FindFirstChildOfClass("Humanoid") then
-        char:FindFirstChildOfClass("Humanoid").PlatformStand = false
-    end
 end
 
 local function startFly()
@@ -1241,16 +1283,19 @@ local function startFly()
     local hum = char and char:FindFirstChildOfClass("Humanoid")
     if not hrp or not hum then return end
 
-    hum.PlatformStand = true
+    -- Keep PlatformStand = false and CanCollide untouched so Fly stays SOLID (no wall clipping!)
+    hum.PlatformStand = false
     flyBG = Instance.new("BodyGyro")
-    flyBG.P = 9e4
-    flyBG.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
+    flyBG.P = 3500
+    flyBG.D = 400
+    flyBG.MaxTorque = Vector3.new(40000, 40000, 40000)
     flyBG.CFrame = hrp.CFrame
     flyBG.Parent = hrp
 
     flyBV = Instance.new("BodyVelocity")
+    flyBV.P = 1800
     flyBV.Velocity = Vector3.zero
-    flyBV.MaxForce = Vector3.new(9e9, 9e9, 9e9)
+    flyBV.MaxForce = Vector3.new(60000, 60000, 60000)
     flyBV.Parent = hrp
 end
 
@@ -1273,6 +1318,11 @@ if tabScrollFrames["admin"] then
         flyEnabled = on
         if on then startFly() else stopFly() end
         setStatus(T("fly") .. (on and " [ON]" or " [OFF]"))
+    end)
+
+    createToggleRow(page, "anti_fling", true, function(on)
+        antiFlingEnabled = on
+        setStatus(T("anti_fling") .. (on and " [ON]" or " [OFF]"))
     end)
 
     createToggleRow(page, "noclip", false, function(on)
@@ -1354,12 +1404,15 @@ if tabScrollFrames["players"] then
     TargetBox.BackgroundColor3 = BG_SURFACE
     TargetBox.Parent = page
     Instance.new("UICorner", TargetBox).CornerRadius = UDim.new(0, 5)
+    local tbStroke = Instance.new("UIStroke", TargetBox)
+    tbStroke.Color = BORDER_SUBTLE
+    tbStroke.Thickness = 1
 
     local TargetLabel = Instance.new("TextLabel")
     TargetLabel.Size = UDim2.new(1, -56, 1, 0)
     TargetLabel.Position = UDim2.new(0, 8, 0, 0)
     TargetLabel.BackgroundTransparency = 1
-    TargetLabel.TextColor3 = ACCENT
+    TargetLabel.TextColor3 = ACCENT_GOLD
     TargetLabel.TextSize = 10
     TargetLabel.Font = Enum.Font.GothamBold
     TargetLabel.TextXAlignment = Enum.TextXAlignment.Left
@@ -1564,11 +1617,14 @@ if tabScrollFrames["players"] then
     RestoreAllBtn.Size = UDim2.new(1, -4, 0, 26)
     RestoreAllBtn.BackgroundColor3 = BG_ELEVATED
     RestoreAllBtn.Text = T("act_restore")
-    RestoreAllBtn.TextColor3 = ACCENT
+    RestoreAllBtn.TextColor3 = ACCENT_GOLD
     RestoreAllBtn.TextSize = 10
     RestoreAllBtn.Font = Enum.Font.GothamBold
     RestoreAllBtn.Parent = page
     Instance.new("UICorner", RestoreAllBtn).CornerRadius = UDim.new(0, 5)
+    local restoreStroke = Instance.new("UIStroke", RestoreAllBtn)
+    restoreStroke.Color = BORDER_SUBTLE
+    restoreStroke.Thickness = 1
 
     RestoreAllBtn.MouseButton1Click:Connect(function()
         clientHiddenUsers = {}
@@ -1636,6 +1692,9 @@ if tabScrollFrames["world"] then
     AnnounceBox.BackgroundColor3 = BG_SURFACE
     AnnounceBox.Parent = page
     Instance.new("UICorner", AnnounceBox).CornerRadius = UDim.new(0, 5)
+    local abStroke = Instance.new("UIStroke", AnnounceBox)
+    abStroke.Color = BORDER_SUBTLE
+    abStroke.Thickness = 1
 
     local AnnounceInput = Instance.new("TextBox")
     AnnounceInput.Size = UDim2.new(1, -48, 1, -4)
@@ -1684,6 +1743,9 @@ if tabScrollFrames["world"] then
     ResetWorldBtn.Font = Enum.Font.GothamBold
     ResetWorldBtn.Parent = page
     Instance.new("UICorner", ResetWorldBtn).CornerRadius = UDim.new(0, 5)
+    local rwStroke = Instance.new("UIStroke", ResetWorldBtn)
+    rwStroke.Color = BORDER_SUBTLE
+    rwStroke.Thickness = 1
 
     ResetWorldBtn.MouseButton1Click:Connect(function()
         Lighting.ClockTime = origLighting.ClockTime
@@ -1706,7 +1768,7 @@ LangButton.MouseButton1Click:Connect(function()
     currentLang = (currentLang == "th") and "en" or "th"
     LangButton.Text = string.upper(currentLang)
     ResetButton.Text = T("reset_view")
-    setStatus("DELTA ADMIN · " .. T("subtitle"))
+    setStatus("ADMIN COMMAND · " .. T("subtitle"))
     for _, cb in ipairs(langRefreshCallbacks) do
         pcall(cb)
     end
@@ -1735,8 +1797,22 @@ mouse.Button1Down:Connect(function()
     end
 end)
 
--- Noclip Loop
+-- Noclip & Anti-Fling Collision Shield Loop
 RunService.Stepped:Connect(function()
+    -- Anti-Fling: disable collision ONLY against other players' characters (map walls stay 100% solid!)
+    if antiFlingEnabled then
+        for _, p in ipairs(Players:GetPlayers()) do
+            if p ~= LocalPlayer and p.Character then
+                for _, part in ipairs(p.Character:GetDescendants()) do
+                    if part:IsA("BasePart") and part.CanCollide then
+                        part.CanCollide = false
+                    end
+                end
+            end
+        end
+    end
+
+    -- Explicit Noclip (only runs when Noclip is turned ON separately from Fly)
     if noclipEnabled and LocalPlayer.Character then
         for _, part in ipairs(LocalPlayer.Character:GetDescendants()) do
             if part:IsA("BasePart") and part.CanCollide then
@@ -1746,7 +1822,28 @@ RunService.Stepped:Connect(function()
     end
 end)
 
--- Main RenderStepped Loop (100% Original Spectate + Auto Bot Scan + ESP + Fly + Godmode)
+-- Anti-Fling Velocity & Angular Clamp (Heartbeat)
+RunService.Heartbeat:Connect(function()
+    if not antiFlingEnabled then return end
+    local char = LocalPlayer.Character
+    if not char then return end
+    local hrp = char:FindFirstChild("HumanoidRootPart")
+    local hum = char:FindFirstChildOfClass("Humanoid")
+    if hum then
+        hum:SetStateEnabled(Enum.HumanoidStateType.FallingDown, false)
+        hum:SetStateEnabled(Enum.HumanoidStateType.Ragdoll, false)
+    end
+    if hrp then
+        if hrp.AssemblyAngularVelocity.Magnitude > 8 then
+            hrp.AssemblyAngularVelocity = Vector3.zero
+        end
+        if not flyEnabled and hrp.AssemblyLinearVelocity.Magnitude > 220 then
+            hrp.AssemblyLinearVelocity = hrp.AssemblyLinearVelocity.Unit * 50
+        end
+    end
+end)
+
+-- Main RenderStepped Loop (100% Original Spectate + Auto Bot Scan + ESP + Solid Fly + Godmode)
 RunService.RenderStepped:Connect(function()
     -- Camera Spectate (Players & Auto-Reacquiring Bots)
     if activeSpectatingPlayer then
@@ -1797,7 +1894,7 @@ RunService.RenderStepped:Connect(function()
         end
     end
 
-    -- Fly Movement
+    -- Solid-Collision Fly Movement (No wall clipping, zero spin)
     if flyEnabled and flyBV and flyBG then
         local moveDir = Vector3.zero
         local camCF = Camera.CFrame
@@ -1809,8 +1906,15 @@ RunService.RenderStepped:Connect(function()
         if UserInputService:IsKeyDown(Enum.KeyCode.LeftControl) or UserInputService:IsKeyDown(Enum.KeyCode.C) then
             moveDir -= Vector3.new(0, 1, 0)
         end
-        flyBG.CFrame = camCF
+        local flatLook = Vector3.new(camCF.LookVector.X, 0, camCF.LookVector.Z)
+        if flatLook.Magnitude > 0.01 then
+            flyBG.CFrame = CFrame.lookAt(Vector3.zero, flatLook.Unit)
+        end
         flyBV.Velocity = (moveDir.Magnitude > 0 and moveDir.Unit or Vector3.zero) * flySpeed
+        local hrp = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+        if hrp then
+            hrp.AssemblyAngularVelocity = Vector3.zero
+        end
     end
 
     -- Godmode & WalkSpeed enforcement
@@ -1895,7 +1999,7 @@ end)
 Players.PlayerRemoving:Connect(function(player)
     if activeSpectatingPlayer == player then
         activeSpectatingPlayer = nil
-        setStatus("DELTA ADMIN · " .. T("subtitle"))
+        setStatus("ADMIN COMMAND · " .. T("subtitle"))
     end
     if jailModels[player.UserId] then
         jailModels[player.UserId]:Destroy()
@@ -1936,7 +2040,7 @@ ResetButton.MouseButton1Up:Connect(function()
         if tick() - pressStartTime < 2 then
             activeSpectatingPlayer = nil
             activeSpectatingModel = nil
-            setStatus("DELTA ADMIN · " .. T("subtitle"))
+            setStatus("ADMIN COMMAND · " .. T("subtitle"))
             if updateSpectateList then updateSpectateList() end
         end
     end
